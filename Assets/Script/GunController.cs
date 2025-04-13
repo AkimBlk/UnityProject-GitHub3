@@ -59,6 +59,19 @@ public class GunController : MonoBehaviour
         currentAmmoInClip--;
         Debug.Log("PEW! Ammo left: " + currentAmmoInClip);
 
+        RaycastHit hit;
+        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0)); // rayon du centre de l'écran
+
+        if (Physics.Raycast(ray, out hit, 100f))
+        {
+            Target target = hit.transform.GetComponent<Target>();
+            if (target != null)
+            {
+                target.TakeHit(); // appelle l’explosion et détruit la cible
+            }
+        }
+
+
         if (gunSound != null)
             gunSound.Play();
 
