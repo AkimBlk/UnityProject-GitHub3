@@ -12,6 +12,13 @@ public class Target : MonoBehaviour
             Destroy(fx, 2f); // Supprime l'effet après 2 secondes 
         }
 
+        // Notifie le LevelManager
+        LevelManager manager = FindObjectOfType<LevelManager>();
+        if (manager != null)
+        {
+            manager.OnTargetDestroyed(this);
+        }
+
         Destroy(gameObject);
     }
 }
