@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class GunController : MonoBehaviour
 {
     [Header("Gun Settings")]
     public float fireRate = 0.1f;
     public int clipSize = 30;
-    public int reserveAmmoCapacity = 270;
+    public int reserveAmmoCapacity = 999;
 
     [Header("Gun State")]
     public bool canShoot;
@@ -18,9 +19,12 @@ public class GunController : MonoBehaviour
     public AudioSource gunSound;
 
     [Header("Recoil")]
-    public Transform weaponTransform; // À lier dans l’inspecteur
-    public Vector3 recoilOffset = new Vector3(0, 0, -0.05f); // Recul vers l’arrière
+    public Transform weaponTransform;
+    public Vector3 recoilOffset = new Vector3(0, 0, -0.05f);
     public float recoilSmoothness = 10f;
+
+    [Header("UI")]
+    public TextMeshProUGUI ammoText;
 
     private Vector3 normalPosition;
 
@@ -33,9 +37,10 @@ public class GunController : MonoBehaviour
         if (muzzleFlashImage != null)
             muzzleFlashImage.color = new Color(1, 1, 1, 0);
 
-        // Sauvegarder la position d'origine de l'arme
         if (weaponTransform != null)
             normalPosition = weaponTransform.localPosition;
+
+        UpdateAmmoUI();
     }
 
     void Update()
@@ -60,17 +65,16 @@ public class GunController : MonoBehaviour
         Debug.Log("PEW! Ammo left: " + currentAmmoInClip);
 
         RaycastHit hit;
-        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0)); // rayon du centre de l'écran
+        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
 
         if (Physics.Raycast(ray, out hit, 100f))
         {
             Target target = hit.transform.GetComponent<Target>();
             if (target != null)
             {
-                target.TakeHit(); // appelle l’explosion et détruit la cible
+                target.TakeHit();
             }
         }
-
 
         if (gunSound != null)
             gunSound.Play();
@@ -78,9 +82,10 @@ public class GunController : MonoBehaviour
         if (muzzleFlashImage != null)
             StartCoroutine(ShowMuzzleFlash());
 
-        // Recul immédiat
         if (weaponTransform != null)
             weaponTransform.localPosition = normalPosition + recoilOffset;
+
+        UpdateAmmoUI();
 
         Invoke("ResetShoot", fireRate);
     }
@@ -94,18 +99,19 @@ public class GunController : MonoBehaviour
     {
         int neededAmmo = clipSize - currentAmmoInClip;
 
-        if (neededAmmo >= ammoInReserve)
+        if (ammoInReserve >= neededAmmo)
+        {
+            currentAmmoInClip += neededAmmo;
+            ammoInReserve -= neededAmmo;
+        }
+        else
         {
             currentAmmoInClip += ammoInReserve;
             ammoInReserve = 0;
         }
-        else
-        {
-            currentAmmoInClip = clipSize;
-            ammoInReserve -= neededAmmo;
-        }
 
         Debug.Log("Reloaded. Clip: " + currentAmmoInClip + " | Reserve: " + ammoInReserve);
+        UpdateAmmoUI();
     }
 
     System.Collections.IEnumerator ShowMuzzleFlash()
@@ -124,6 +130,14 @@ public class GunController : MonoBehaviour
                 normalPosition,
                 Time.deltaTime * recoilSmoothness
             );
+        }
+    }
+
+    void UpdateAmmoUI()
+    {
+        if (ammoText != null)
+        {
+            ammoText.text = "" + currentAmmoInClip + " / " + ammoInReserve;
         }
     }
 }
