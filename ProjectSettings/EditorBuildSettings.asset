@@ -11,13 +11,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/AimMap.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/HDRP_FreeDemoScene.unity
     guid: d17a329bee8b07a4cbdf962a83b76350
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/URP_FreeDemoScene.unity
     guid: b03e2d1ded29c484c8dab042cd3e333c
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/FreeDemoScen_WMShader.unity
     guid: 5649799efe5fa544999d5204b00eeec3
   m_configObjects: {}
