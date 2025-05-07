@@ -16,7 +16,7 @@ public class MenuController : MonoBehaviour
         // Assurer que le Canvas principal est actif au démarrage
         canvasDefault.SetActive(true);
         canvasWorldSpace.SetActive(false); // Cachez le Canvas des paramètres
-        AudioListener.volume = 5f; // Assurez-vous que le volume commence à 50 %
+        AudioListener.volume = 0.5f; // Assurez-vous que le volume commence à 50 %
         UpdateVolumeIcon(); // Mettre à jour l'icône du volume au démarrage
     }
 
@@ -52,7 +52,7 @@ public class MenuController : MonoBehaviour
         if (isMuted)
         {
             // Définir le volume à 50 % si le son était coupé
-            AudioListener.volume = 5f;
+            AudioListener.volume = 0.5f;
             isMuted = false; // Met à jour l'état
         }
         else

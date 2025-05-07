@@ -4,8 +4,8 @@ using UnityEngine;
 public class ContrôleurJoueur : MonoBehaviour
 {
     [Header("Paramètres de Mouvement")]
-    public float vitesseMarche = 5f;
-    public float vitesseCourse = 10f;
+    public float vitesseMarche = 10f;
+    public float vitesseCourse = 30f;
     public float gravité = -9.81f;
     public float hauteurSaut = 1.5f;
 
