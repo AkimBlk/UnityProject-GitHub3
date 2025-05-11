@@ -2,14 +2,13 @@ using UnityEngine;
 
 public class SChangeSkybox : MonoBehaviour
 {
-    public Material Skybox2;  // Le nouveau skybox à afficher
+    public Material Skybox2; // skybox a changer
 
     private void OnTriggerEnter(Collider other)
     {
-        // Vérifier si c'est le joueur qui entre dans le trigger
+        // Verif si c'est le player qui trigger
         if (other.CompareTag("Player"))
         {
-            // Changer le skybox
             RenderSettings.skybox = Skybox2;
         }
     }
