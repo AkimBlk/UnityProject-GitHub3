@@ -5,8 +5,11 @@ using TMPro;
 
 public class LevelManager : MonoBehaviour
 {
-    [Header("Références UI")]
+    [Header("RÃ©fÃ©rences UI")]
     public TextMeshProUGUI messageText;
+    public TextMeshProUGUI timerText;
+
+    [Header("Messages de fin de niveau")]
     public List<string> levelMessages = new List<string>();
 
     [Header("Cibles et portes par niveau")]
@@ -15,13 +18,16 @@ public class LevelManager : MonoBehaviour
 
     private int currentLevel = 0;
 
-    [System.Serializable] // Permet d'afficher la classe dans l'inspecteur
+    private float timer = 0f;
+    private bool timerRunning = false;
+
+    [System.Serializable]
     public class TargetsPerLevel
     {
         public List<Target> targets = new List<Target>();
     }
 
-    [System.Serializable] // Permet d'afficher la classe dans l'inspecteur
+    [System.Serializable]
     public class GatesPerLevel
     {
         public List<GameObject> gates = new List<GameObject>();
@@ -30,11 +36,21 @@ public class LevelManager : MonoBehaviour
     private void Start()
     {
         UpdateMessage("");
+        UpdateTimerUI(0f);
+        timerText.gameObject.SetActive(false); // Ne pas afficher au dÃ©but
 
-        // Vérifier que les listes sont initialisées correctement
         if (levelsTargets.Count == 0)
         {
-            Debug.LogWarning("Aucun niveau défini dans levelsTargets!");
+            Debug.LogWarning("Aucun niveau dÃ©fini dans levelsTargets !");
+        }
+    }
+
+    private void Update()
+    {
+        if (timerRunning)
+        {
+            timer += Time.deltaTime;
+            UpdateTimerUI(timer);
         }
     }
 
@@ -42,19 +58,21 @@ public class LevelManager : MonoBehaviour
     {
         if (currentLevel >= levelsTargets.Count) return;
 
-        // On cherche si la cible détruite fait partie du niveau actuel
+        // DÃ©marrage du chrono uniquement Ã  la premiÃ¨re cible du niveau 1
+        if (!timerRunning && timer == 0f && currentLevel == 0)
+        {
+            StartTimer();
+        }
+
         if (levelsTargets[currentLevel].targets.Contains(target))
         {
             levelsTargets[currentLevel].targets.Remove(target);
-
-            // Vérifier si toutes les cibles du niveau sont détruites
             CheckLevelCompletion();
         }
     }
 
     private void CheckLevelCompletion()
     {
-        // Si toutes les cibles sont détruites, niveau terminé
         if (levelsTargets[currentLevel].targets.Count == 0)
         {
             LevelCompleted();
@@ -63,19 +81,18 @@ public class LevelManager : MonoBehaviour
 
     void LevelCompleted()
     {
-        Debug.Log($"Niveau {currentLevel + 1} terminé !");
+        Debug.Log($"Niveau {currentLevel + 1} terminÃ© !");
 
-        // Afficher le message de niveau terminé
         if (currentLevel < levelMessages.Count)
         {
             SetMessage(levelMessages[currentLevel], Color.green);
         }
         else
         {
-            SetMessage($"Niveau {currentLevel + 1} terminé!", Color.green);
+            SetMessage($"Niveau {currentLevel + 1} terminÃ©!", Color.green);
         }
 
-        // Supprimer les portes de ce niveau
+        // Supprimer les portes
         if (currentLevel < levelsGates.Count)
         {
             foreach (GameObject gate in levelsGates[currentLevel].gates)
@@ -86,14 +103,34 @@ public class LevelManager : MonoBehaviour
         }
 
         StartCoroutine(ClearMessageAfterDelay(5f));
-        currentLevel++;
 
-        // Si tous les niveaux sont terminés
-        if (currentLevel >= levelsTargets.Count)
+        // Stop chrono si câ€™est la fin du dernier niveau
+        if (currentLevel == levelsTargets.Count - 1)
         {
-            // Option: vous pouvez afficher un message de fin de jeu
-            // SetMessage("Tous les niveaux sont terminés!", Color.yellow);
-            Debug.Log("Tous les niveaux sont terminés!");
+            StopTimer();
+            Debug.Log($"Temps final : {timer:F2} secondes !");
+        }
+
+        currentLevel++;
+    }
+
+    void StartTimer()
+    {
+        timer = 0f;
+        timerRunning = true;
+        timerText.gameObject.SetActive(true);
+    }
+
+    void StopTimer()
+    {
+        timerRunning = false;
+    }
+
+    void UpdateTimerUI(float time)
+    {
+        if (timerText != null)
+        {
+            timerText.text = $"Temps: {time:F2} s";
         }
     }
 
@@ -112,10 +149,7 @@ public class LevelManager : MonoBehaviour
         if (messageText != null)
         {
             messageText.text = text;
-            if (string.IsNullOrEmpty(text))
-                messageText.gameObject.SetActive(false);
-            else
-                messageText.gameObject.SetActive(true);
+            messageText.gameObject.SetActive(!string.IsNullOrEmpty(text));
         }
     }
 
