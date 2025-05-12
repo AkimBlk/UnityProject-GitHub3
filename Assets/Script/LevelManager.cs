@@ -7,7 +7,7 @@ public class LevelManager : MonoBehaviour
 {
     [Header("Références UI")]
     public TextMeshProUGUI messageText;
-    public TextMeshProUGUI timerText;
+    public TextMeshProUGUI timerText; // Le texte du chrono affiché à l'écran
 
     [Header("Messages de fin de niveau")]
     public List<string> levelMessages = new List<string>();
@@ -18,8 +18,8 @@ public class LevelManager : MonoBehaviour
 
     private int currentLevel = 0;
 
-    private float timer = 0f;
-    private bool timerRunning = false;
+    private float timer = 0f; // ca commence a 0.00s 
+    private bool timerRunning = false; // Est ce que le chrono est actif ?
 
     [System.Serializable]
     public class TargetsPerLevel
@@ -50,7 +50,7 @@ public class LevelManager : MonoBehaviour
         if (timerRunning)
         {
             timer += Time.deltaTime;
-            UpdateTimerUI(timer);
+            UpdateTimerUI(timer); // Affiche le temps en direct 
         }
     }
 
@@ -61,7 +61,7 @@ public class LevelManager : MonoBehaviour
         // Démarrage du chrono uniquement à la première cible du niveau 1
         if (!timerRunning && timer == 0f && currentLevel == 0)
         {
-            StartTimer();
+            StartTimer(); 
         }
 
         if (levelsTargets[currentLevel].targets.Contains(target))
@@ -130,7 +130,7 @@ public class LevelManager : MonoBehaviour
     {
         if (timerText != null)
         {
-            timerText.text = $"Temps: {time:F2} s";
+            timerText.text = $"Temps: {time:F2} s"; //pour afficher le crono
         }
     }
 

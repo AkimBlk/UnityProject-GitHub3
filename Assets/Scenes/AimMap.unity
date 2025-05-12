@@ -57080,7 +57080,7 @@ MonoBehaviour:
   emptyClickSound: {fileID: 766296952}
   reloadSound: {fileID: 1659204978}
   weaponTransform: {fileID: 543450651881423163}
-  recoilOffset: {x: 0, y: 0, z: -0.08}
+  recoilOffset: {x: 0, y: 0.1, z: -0.15}
   recoilSmoothness: 10
   reloadDownOffset: {x: 0, y: -0.1, z: -0.1}
   reloadDuration: 0.5
